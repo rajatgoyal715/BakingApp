@@ -37,10 +37,11 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
     private DishesAdapter dishesAdapter;
     private GridLayoutManager layoutManager;
 
-    private ArrayList<Dish> dishes;
+    private static ArrayList<Dish> dishes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -54,7 +55,9 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
         dishesAdapter = new DishesAdapter(this);
         dishesList.setAdapter(dishesAdapter);
 
-        if (savedInstanceState == null) {
+        if (dishes != null) {
+            updateDishes();
+        } else if (savedInstanceState == null) {
             loadDishes();
         } else {
             dishes = savedInstanceState.getParcelableArrayList("dishes");

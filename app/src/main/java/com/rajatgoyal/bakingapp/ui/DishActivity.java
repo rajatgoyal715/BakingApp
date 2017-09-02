@@ -19,7 +19,7 @@ public class DishActivity extends AppCompatActivity implements StepsAdapter.Step
 
     private boolean mTwoPane;
 
-    private Dish dish;
+    private static Dish dish;
 
     private RecyclerView stepsList;
     private StepsAdapter stepsAdapter;
@@ -32,10 +32,12 @@ public class DishActivity extends AppCompatActivity implements StepsAdapter.Step
 
         mTwoPane = false;
 
-        if (savedInstanceState == null) {
-            dish = getIntent().getParcelableExtra("dish");
-        } else {
-            dish = savedInstanceState.getParcelable("dish");
+        if (dish == null) {
+            if (savedInstanceState == null) {
+                dish = getIntent().getParcelableExtra("dish");
+            } else {
+                dish = savedInstanceState.getParcelable("dish");
+            }
         }
 
         getSupportActionBar().setTitle(dish.getName());
@@ -73,11 +75,6 @@ public class DishActivity extends AppCompatActivity implements StepsAdapter.Step
             intent.putExtra("id", id);
             startActivity(intent);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
