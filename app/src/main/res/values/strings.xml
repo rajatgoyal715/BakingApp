@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">BakingApp</string>
+    <string name="app_name">Baking Time</string>
+    <string name="json_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="restart">Restart</string>
 </resources>
