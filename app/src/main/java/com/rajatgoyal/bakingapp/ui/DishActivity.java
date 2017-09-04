@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -28,7 +29,13 @@ public class DishActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            dish = MainActivity.dishes.get(MainActivity.DISH_ID);
+            if (getIntent() != null) {
+                int position = getIntent().getIntExtra("item", 0);
+                dish = MainActivity.dishes.get(position);
+                Toast.makeText(this, "DishActivity: Widget: " + position, Toast.LENGTH_SHORT).show();
+            } else {
+                dish = MainActivity.dishes.get(MainActivity.DISH_ID);
+            }
         } else {
             dish = savedInstanceState.getParcelable("dish");
         }

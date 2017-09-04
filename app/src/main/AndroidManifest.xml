@@ -44,12 +44,12 @@
                 android:value=".ui.DishActivity" />
         </activity>
 
-        <receiver android:name=".ui.StepActivity$MediaReceiver">
+        <receiver android:name=".fragment.StepDetailFragment$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".DishWidgetProvider">
+        <receiver android:name=".widget.DishWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -58,6 +58,8 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/dish_widget_provider_info" />
         </receiver>
+        <service android:name=".widget.DishWidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>
