@@ -1,61 +1,82 @@
 package com.rajatgoyal.bakingapp.ui;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.rajatgoyal.bakingapp.R;
-import com.rajatgoyal.bakingapp.adapter.StepsAdapter;
+import com.rajatgoyal.bakingapp.fragment.IngredientFragment;
+import com.rajatgoyal.bakingapp.fragment.StepDetailFragment;
+import com.rajatgoyal.bakingapp.fragment.StepListFragment;
 import com.rajatgoyal.bakingapp.model.Dish;
+import com.rajatgoyal.bakingapp.model.Step;
 
-public class DishActivity extends AppCompatActivity implements StepsAdapter.StepItemClickListener{
+public class DishActivity extends AppCompatActivity implements
+        StepListFragment.OnIngredientClickListener, StepListFragment.OnStepClickListener {
 
-    private boolean mTwoPane;
+    public boolean mTwoPane;
 
-    private static Dish dish;
+    public static Dish dish;
+    public static int STEP_ID;
 
-    private RecyclerView stepsList;
-    private StepsAdapter stepsAdapter;
-    private LinearLayoutManager layoutManager;
+    private StepDetailFragment stepDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dish);
 
-        mTwoPane = false;
-
-        if (dish == null) {
-            if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
+            Toast.makeText(this, "Dish from intent", Toast.LENGTH_SHORT).show();
+            if (getIntent() != null) {
                 dish = getIntent().getParcelableExtra("dish");
-            } else {
-                dish = savedInstanceState.getParcelable("dish");
             }
+        } else {
+            Toast.makeText(this, "Dish found", Toast.LENGTH_SHORT).show();
+            dish = savedInstanceState.getParcelable("dish");
         }
 
+        setContentView(R.layout.activity_dish);
         getSupportActionBar().setTitle(dish.getName());
 
-        stepsList = (RecyclerView) findViewById(R.id.steps_list);
+        if (findViewById(R.id.step_detail_container) != null) {
+            mTwoPane = true;
 
-        layoutManager = new LinearLayoutManager(this);
-        stepsList.setLayoutManager(layoutManager);
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        stepsAdapter = new StepsAdapter(this);
-        stepsAdapter.setSteps(dish.getSteps());
-        stepsList.setAdapter(stepsAdapter);
-    }
+            stepDetailFragment = new StepDetailFragment();
+            STEP_ID = 0;
+            if (savedInstanceState != null) {
+                STEP_ID = savedInstanceState.getInt("STEP_ID");
+                if (STEP_ID == -1) {
+                    IngredientFragment ingredientFragment = new IngredientFragment();
+                    ingredientFragment.setIngredients(dish.getIngredients());
 
-    public void openIngredients(View view) {
-        Intent intent = new Intent(this, IngredientsActivity.class);
-        intent.putParcelableArrayListExtra("ingredients", dish.getIngredients());
-        startActivity(intent);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.step_detail_container, ingredientFragment)
+                            .commit();
+                } else {
+                    stepDetailFragment.setData(dish, STEP_ID, mTwoPane);
+
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.step_detail_container, stepDetailFragment)
+                            .commit();
+                }
+            } else {
+                stepDetailFragment.setData(dish, STEP_ID, mTwoPane);
+
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_detail_container, stepDetailFragment)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
     @Override
@@ -63,17 +84,8 @@ public class DishActivity extends AppCompatActivity implements StepsAdapter.Step
         super.onSaveInstanceState(outState);
 
         outState.putParcelable("dish", dish);
-    }
-
-    @Override
-    public void onClick(int id) {
         if (mTwoPane) {
-
-        } else {
-            Intent intent = new Intent(this, StepActivity.class);
-            intent.putExtra("dish", dish);
-            intent.putExtra("id", id);
-            startActivity(intent);
+            outState.putInt("STEP_ID", STEP_ID);
         }
     }
 
@@ -83,5 +95,42 @@ public class DishActivity extends AppCompatActivity implements StepsAdapter.Step
             NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onIngredientsSelected() {
+        if (mTwoPane) {
+
+            STEP_ID = -1;
+            IngredientFragment ingredientFragment = new IngredientFragment();
+            ingredientFragment.setIngredients(dish.getIngredients());
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.step_detail_container, ingredientFragment)
+                    .commit();
+
+        } else {
+            Intent intent = new Intent(this, IngredientsActivity.class);
+            intent.putParcelableArrayListExtra("ingredients", dish.getIngredients());
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onStepSelected(int id) {
+        STEP_ID = id;
+        if (mTwoPane) {
+            stepDetailFragment = new StepDetailFragment();
+            stepDetailFragment.setData(dish, id, mTwoPane);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.step_detail_container, stepDetailFragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, StepActivity.class);
+            intent.putExtra("dish", dish);
+            intent.putExtra("id", id);
+            startActivity(intent);
+        }
     }
 }

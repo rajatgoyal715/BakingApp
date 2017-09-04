@@ -53,7 +53,8 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
         this.steps = steps;
     }
 
-    class StepViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class StepViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         TextView shortDescription;
 

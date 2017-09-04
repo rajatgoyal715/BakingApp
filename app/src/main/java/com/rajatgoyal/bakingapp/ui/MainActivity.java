@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
 
         dishesList = (RecyclerView) findViewById(R.id.dishes_list);
 
-        layoutManager = new GridLayoutManager(this, 1);
+        layoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.dish_columns));
         dishesList.setLayoutManager(layoutManager);
 
         dishesAdapter = new DishesAdapter(this);
