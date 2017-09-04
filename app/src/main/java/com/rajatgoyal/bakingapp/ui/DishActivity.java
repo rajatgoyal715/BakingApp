@@ -6,8 +6,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.rajatgoyal.bakingapp.R;
@@ -15,13 +13,11 @@ import com.rajatgoyal.bakingapp.fragment.IngredientFragment;
 import com.rajatgoyal.bakingapp.fragment.StepDetailFragment;
 import com.rajatgoyal.bakingapp.fragment.StepListFragment;
 import com.rajatgoyal.bakingapp.model.Dish;
-import com.rajatgoyal.bakingapp.model.Step;
 
 public class DishActivity extends AppCompatActivity implements
         StepListFragment.OnIngredientClickListener, StepListFragment.OnStepClickListener {
 
-    public boolean mTwoPane;
-
+    public static boolean mTwoPane;
     public static Dish dish;
     public static int STEP_ID;
 
@@ -32,12 +28,8 @@ public class DishActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            Toast.makeText(this, "Dish from intent", Toast.LENGTH_SHORT).show();
-            if (getIntent() != null) {
-                dish = getIntent().getParcelableExtra("dish");
-            }
+            dish = MainActivity.dishes.get(MainActivity.DISH_ID);
         } else {
-            Toast.makeText(this, "Dish found", Toast.LENGTH_SHORT).show();
             dish = savedInstanceState.getParcelable("dish");
         }
 
@@ -111,7 +103,6 @@ public class DishActivity extends AppCompatActivity implements
 
         } else {
             Intent intent = new Intent(this, IngredientsActivity.class);
-            intent.putParcelableArrayListExtra("ingredients", dish.getIngredients());
             startActivity(intent);
         }
     }
@@ -128,8 +119,6 @@ public class DishActivity extends AppCompatActivity implements
                     .commit();
         } else {
             Intent intent = new Intent(this, StepActivity.class);
-            intent.putExtra("dish", dish);
-            intent.putExtra("id", id);
             startActivity(intent);
         }
     }

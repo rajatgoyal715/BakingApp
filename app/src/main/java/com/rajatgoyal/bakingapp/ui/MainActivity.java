@@ -1,8 +1,6 @@
 package com.rajatgoyal.bakingapp.ui;
 
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements DishesAdapter.DishItemClickListener {
 
@@ -37,11 +34,11 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
     private DishesAdapter dishesAdapter;
     private GridLayoutManager layoutManager;
 
-    private static ArrayList<Dish> dishes;
+    public static ArrayList<Dish> dishes;
+    public static int DISH_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -67,11 +64,10 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
 
     @Override
     public void onClick(int id) {
+
+        DISH_ID = id-1;
+
         Intent intent = new Intent(this, DishActivity.class);
-
-        // id is 1-indexed
-        intent.putExtra("dish", dishes.get(id-1));
-
         startActivity(intent);
     }
 

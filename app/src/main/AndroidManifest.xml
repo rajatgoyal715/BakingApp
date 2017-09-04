@@ -35,17 +35,28 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.DishActivity" />
         </activity>
-        <activity android:name=".ui.StepActivity"
+        <activity
+            android:name=".ui.StepActivity"
             android:label="Step Detail"
             android:parentActivityName=".ui.DishActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.DishActivity" />
         </activity>
+
         <receiver android:name=".ui.StepActivity$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
+        </receiver>
+        <receiver android:name=".DishWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/dish_widget_provider_info" />
         </receiver>
     </application>
 

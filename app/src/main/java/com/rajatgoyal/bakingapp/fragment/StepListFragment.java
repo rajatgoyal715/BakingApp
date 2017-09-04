@@ -1,7 +1,6 @@
 package com.rajatgoyal.bakingapp.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,14 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rajatgoyal.bakingapp.R;
-import com.rajatgoyal.bakingapp.adapter.DishesAdapter;
 import com.rajatgoyal.bakingapp.adapter.StepsAdapter;
 import com.rajatgoyal.bakingapp.model.Dish;
-import com.rajatgoyal.bakingapp.model.Step;
 import com.rajatgoyal.bakingapp.ui.DishActivity;
-import com.rajatgoyal.bakingapp.ui.IngredientsActivity;
-
-import java.util.ArrayList;
 
 /**
  * Created by rajat on 2/9/17.

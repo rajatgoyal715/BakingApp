@@ -58,8 +58,8 @@ public class StepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            dish = getIntent().getParcelableExtra("dish");
-            STEP_ID = getIntent().getIntExtra("id", 0);
+            dish = DishActivity.dish;
+            STEP_ID = DishActivity.STEP_ID;
         } else {
             dish = savedInstanceState.getParcelable("dish");
             STEP_ID = savedInstanceState.getInt("id");

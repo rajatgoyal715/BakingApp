@@ -36,8 +36,7 @@ public class IngredientsActivity extends AppCompatActivity {
         ingredientsList.setAdapter(ingredientsAdapter);
 
         if (savedInstanceState == null) {
-            Bundle bundle = getIntent().getExtras();
-            ingredients = bundle.getParcelableArrayList("ingredients");
+            ingredients = DishActivity.dish.getIngredients();
             updateIngredientsList();
         } else {
             ingredients = savedInstanceState.getParcelableArrayList("ingredients");
