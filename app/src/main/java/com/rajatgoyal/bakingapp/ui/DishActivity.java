@@ -32,7 +32,6 @@ public class DishActivity extends AppCompatActivity implements
             if (getIntent() != null) {
                 int position = getIntent().getIntExtra("item", 0);
                 dish = MainActivity.dishes.get(position);
-                Toast.makeText(this, "DishActivity: Widget: " + position, Toast.LENGTH_SHORT).show();
             } else {
                 dish = MainActivity.dishes.get(MainActivity.DISH_ID);
             }

@@ -68,10 +68,16 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     private boolean videoAvailable;
 
+    private static long playerPosition;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
+
+        if(savedInstanceState != null) {
+            playerPosition = savedInstanceState.getLong("playerPosition", 0);
+        }
 
         previousButton = (Button) rootView.findViewById(R.id.previous_button);
         nextButton = (Button) rootView.findViewById(R.id.next_button);
@@ -251,6 +257,9 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mediaUrl), new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
+
+            //restart from the same position after rotation
+            mExoPlayer.seekTo(playerPosition);
             mExoPlayer.setPlayWhenReady(true);
         }
     }
@@ -266,36 +275,17 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mPlayerView.setVisibility(View.GONE);
     }
 
-    private void showPlayer() {
-        mPlayerView.setVisibility(View.VISIBLE);
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putParcelable("dish", dish);
         outState.putInt("id", STEP_ID);
-    }
 
-    static long currentPosition;
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-//        if (mExoPlayer != null) {
-//            currentPosition = mExoPlayer.getCurrentPosition();
-//        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        if (mExoPlayer != null) {
-//            mExoPlayer.seekTo(currentPosition);
-//            mExoPlayer.setPlayWhenReady(true);
-//        }
+        if (videoAvailable && mExoPlayer != null) {
+            playerPosition = mExoPlayer.getCurrentPosition();
+            outState.putLong("playerPosition", playerPosition);
+        }
     }
 
     @Override
