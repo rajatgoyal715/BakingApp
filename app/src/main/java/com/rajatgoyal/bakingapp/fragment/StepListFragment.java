@@ -24,7 +24,7 @@ public class StepListFragment extends Fragment implements StepsAdapter.StepItemC
 
     private Dish dish;
 
-    OnIngredientClickListener mIngredientCallback;
+    private OnIngredientClickListener mIngredientCallback;
 
     @Override
     public void onClick(int id) {

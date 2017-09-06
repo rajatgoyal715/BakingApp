@@ -21,6 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -293,6 +294,16 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         super.onDestroy();
         if (videoAvailable) {
             releasePlayer();
+            mMediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (videoAvailable) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
             mMediaSession.setActive(false);
         }
     }
