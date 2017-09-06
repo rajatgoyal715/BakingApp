@@ -1,5 +1,6 @@
 package com.rajatgoyal.bakingapp.widget;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -88,7 +89,7 @@ public class DishWidgetRemoteViewsFactory implements RemoteViewsService.RemoteVi
 
         Intent intent = new Intent();
         intent.putExtra("item", position);
-        remoteViews.setOnClickFillInIntent(R.id.dish_details, intent);
+        remoteViews.setOnClickFillInIntent(R.id.ingredients_items_list, intent);
 
         return remoteViews;
     }
