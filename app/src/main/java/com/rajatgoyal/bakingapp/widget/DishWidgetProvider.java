@@ -30,12 +30,12 @@ public class DishWidgetProvider extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.dishTitle, pendingIntent);
 
         Intent listIntent = new Intent(context, DishWidgetRemoteViewsService.class);
-        views.setRemoteAdapter(R.id.ingredientsList, listIntent);
+        views.setRemoteAdapter(R.id.dish_details, listIntent);
 
         Intent clickIntent = new Intent(context, DishActivity.class);
         PendingIntent clickPendingIntent = PendingIntent.getActivity(context, 0, clickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.ingredientsList, clickPendingIntent);
+        views.setPendingIntentTemplate(R.id.dish_details, clickPendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -54,8 +54,9 @@ public class DishWidgetProvider extends AppWidgetProvider {
         final String action = intent.getAction();
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            ComponentName cn = new ComponentName(context, DishWidgetProvider.class);
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(cn), R.id.ingredientsList);
+//            ComponentName cn = new ComponentName(context, DishWidgetProvider.class);
+            int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.dish_details);
         }
         super.onReceive(context, intent);
     }

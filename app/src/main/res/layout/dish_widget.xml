@@ -24,12 +24,9 @@
     </FrameLayout>
 
     <ListView
-        android:id="@+id/ingredientsList"
+        android:id="@+id/dish_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:divider="#eeeeee"
-        android:dividerHeight="1dp"
         tools:listitem="@layout/dish_widget_list_item" />
 
 </LinearLayout>

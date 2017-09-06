@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.rajatgoyal.bakingapp.ui.MainActivity.dishes;
 
 /**
@@ -55,12 +57,18 @@ public class DishWidgetRemoteViewsFactory implements RemoteViewsService.RemoteVi
 
     @Override
     public int getCount() {
-        if (dishes == null) return 0;
-        return dishes.size();
+        return 1;
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
+
+        if(dishes == null) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.empty_widget);
+            return remoteViews;
+        }
+
+        position = context.getSharedPreferences("dish_details", MODE_PRIVATE).getInt("dish_id", 0);
         Dish dish = dishes.get(position);
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.dish_widget_list_item);
@@ -80,7 +88,7 @@ public class DishWidgetRemoteViewsFactory implements RemoteViewsService.RemoteVi
 
         Intent intent = new Intent();
         intent.putExtra("item", position);
-        remoteViews.setOnClickFillInIntent(R.id.ingredients_widget_list, intent);
+        remoteViews.setOnClickFillInIntent(R.id.dish_details, intent);
 
         return remoteViews;
     }
