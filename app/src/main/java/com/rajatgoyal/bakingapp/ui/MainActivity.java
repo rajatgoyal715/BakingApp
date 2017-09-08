@@ -1,6 +1,11 @@
 package com.rajatgoyal.bakingapp.ui;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -55,11 +60,39 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
         if (dishes != null) {
             updateDishes();
         } else if (savedInstanceState == null) {
-            loadDishes();
+            if(isOnline()) {
+                loadDishes();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Error")
+                        .setMessage("Please check your internet connnection.")
+                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(isOnline()) {
+                                    loadDishes();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+            }
         } else {
             dishes = savedInstanceState.getParcelableArrayList("dishes");
             updateDishes();
         }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     @Override
@@ -129,14 +162,14 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
 
                             updateDishes();
                         } catch (JSONException e) {
-                            // timber log statement
+
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Toast.makeText(MainActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 }
         );

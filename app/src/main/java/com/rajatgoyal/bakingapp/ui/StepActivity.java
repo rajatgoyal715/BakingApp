@@ -97,6 +97,7 @@ public class StepActivity extends AppCompatActivity {
         STEP_ID = STEP_ID - 1;
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
         stepDetailFragment.setData(dish, STEP_ID, false);
+        stepDetailFragment.playerPosition = 0;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -108,6 +109,7 @@ public class StepActivity extends AppCompatActivity {
         STEP_ID = STEP_ID + 1;
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
         stepDetailFragment.setData(dish, STEP_ID, false);
+        stepDetailFragment.playerPosition = 0;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()

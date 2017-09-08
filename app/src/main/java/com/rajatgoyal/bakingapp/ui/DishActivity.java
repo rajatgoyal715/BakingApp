@@ -50,8 +50,10 @@ public class DishActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_dish);
         getSupportActionBar().setTitle(dish.getName());
 
-        if (findViewById(R.id.step_detail_container) != null) {
-            mTwoPane = true;
+        // checking if opened on tablet using resources
+        mTwoPane = getResources().getBoolean(R.bool.isTablet);
+
+        if (mTwoPane) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -80,8 +82,6 @@ public class DishActivity extends AppCompatActivity implements
                         .add(R.id.step_detail_container, stepDetailFragment)
                         .commit();
             }
-        } else {
-            mTwoPane = false;
         }
     }
 

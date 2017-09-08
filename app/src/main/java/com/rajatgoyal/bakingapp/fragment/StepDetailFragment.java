@@ -14,12 +14,13 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,9 @@ import com.rajatgoyal.bakingapp.R;
 import com.rajatgoyal.bakingapp.model.Dish;
 import com.rajatgoyal.bakingapp.model.Step;
 import com.rajatgoyal.bakingapp.ui.StepActivity;
+import com.squareup.picasso.Picasso;
+
+import java.net.URLConnection;
 
 /**
  * Created by rajat on 2/9/17.
@@ -65,19 +69,24 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
 
-    Button previousButton, nextButton;
+    private Button previousButton, nextButton;
+    private ImageView thumbnailImageView;
 
-    private boolean videoAvailable;
+    private boolean videoAvailable, imageAvailable;
 
-    private static long playerPosition;
+    public static long playerPosition;
+    private static String mediaUrl, thumbnailUrl;
+
+    private static boolean newlyCreated;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             playerPosition = savedInstanceState.getLong("playerPosition", 0);
+            newlyCreated = false;
         }
 
         previousButton = (Button) rootView.findViewById(R.id.previous_button);
@@ -91,32 +100,51 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         description = (TextView) rootView.findViewById(R.id.descripton_text_view);
         description.setText(step.getDescription());
 
-        String mediaUrl = "";
-        videoAvailable = true;
+        thumbnailImageView = (ImageView) rootView.findViewById(R.id.thumbnail_image_view);
 
-        if (!step.getVideoUrl().equals("")) {
+        mediaUrl = "";
+        thumbnailUrl = "";
+
+        videoAvailable = false;
+        imageAvailable = false;
+
+        if (!TextUtils.isEmpty(step.getVideoUrl())) {
+
             mediaUrl = step.getVideoUrl();
-        } else {
-            if (!step.getThumbnailUrl().equals("")) {
-                mediaUrl = step.getThumbnailUrl();
-            } else {
-                videoAvailable = false;
+            videoAvailable = true;
+
+        } else if (!TextUtils.isEmpty(step.getThumbnailUrl())) {
+
+            thumbnailUrl = step.getThumbnailUrl();
+
+            String mimeType = URLConnection.guessContentTypeFromName(thumbnailUrl);
+            if (mimeType != null && mimeType.startsWith("video")) {
+                videoAvailable = true;
+                mediaUrl = thumbnailUrl;
+            } else if (mimeType != null && mimeType.startsWith("image")) {
+                imageAvailable = true;
             }
+
         }
 
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
 
-        if (videoAvailable) {
-            initializeMediaSession();
-            initializePlayer(mediaUrl);
-        } else {
+        if (!videoAvailable) {
             hidePlayer();
+        }
+
+        if (imageAvailable) {
+            Picasso.with(getContext()).load(thumbnailUrl).into(thumbnailImageView);
+            thumbnailImageView.setVisibility(View.VISIBLE);
+        } else {
+            thumbnailImageView.setVisibility(View.GONE);
         }
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && !mTwoPane) {
             hideSystemUI();
             hideButtons();
             description.setVisibility(View.GONE);
+            thumbnailImageView.setVisibility(View.GONE);
         }
 
         return rootView;
@@ -145,6 +173,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         STEP_ID = STEP_ID1;
         step = dish.getSteps().get(STEP_ID);
         mTwoPane = mTwoPane1;
+        newlyCreated = true;
     }
 
     public void initializeButtons() {
@@ -242,7 +271,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         mNotificationManager.notify(0, builder.build());
     }
 
-    private void initializePlayer(String mediaUrl) {
+    private void initializePlayer() {
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -253,23 +282,30 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             // Set the ExoPlayer.EventListener to this activity.
             mExoPlayer.addListener(this);
 
+            //restart from the same position after rotation
+            if (!newlyCreated) {
+                mExoPlayer.seekTo(playerPosition);
+            }
+
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(getContext(), "BakingApp");
             MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mediaUrl), new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
 
-            //restart from the same position after rotation
-            mExoPlayer.seekTo(playerPosition);
             mExoPlayer.setPlayWhenReady(true);
         }
     }
 
     private void releasePlayer() {
-        mNotificationManager.cancelAll();
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mNotificationManager != null) {
+            mNotificationManager.cancelAll();
+        }
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     private void hidePlayer() {
@@ -283,10 +319,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         outState.putParcelable("dish", dish);
         outState.putInt("id", STEP_ID);
 
-        if (videoAvailable && mExoPlayer != null) {
-            playerPosition = mExoPlayer.getCurrentPosition();
+        // save position for rotation
+        if (videoAvailable) {
             outState.putLong("playerPosition", playerPosition);
         }
+        newlyCreated = false;
     }
 
     @Override
@@ -302,9 +339,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public void onPause() {
         super.onPause();
         if (videoAvailable) {
-            mExoPlayer.stop();
-            mExoPlayer.release();
+            playerPosition = mExoPlayer.getCurrentPosition();
+            releasePlayer();
             mMediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (videoAvailable) {
+            initializeMediaSession();
+            initializePlayer();
         }
     }
 
