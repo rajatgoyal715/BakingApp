@@ -17,13 +17,15 @@ public class Dish implements Parcelable{
     private int servings;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<Step> steps;
+    private String image;
 
-    public Dish(int id, String name, int servings, ArrayList<Ingredient> ingredients, ArrayList<Step> steps) {
+    public Dish(int id, String name, int servings, ArrayList<Ingredient> ingredients, ArrayList<Step> steps, String image) {
         this.id = id;
         this.name = name;
         this.servings = servings;
         this.ingredients = ingredients;
         this.steps = steps;
+        this.image = image;
     }
 
     public int getId() {
@@ -46,6 +48,10 @@ public class Dish implements Parcelable{
         return steps;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -58,6 +64,7 @@ public class Dish implements Parcelable{
         dest.writeInt(servings);
         dest.writeTypedList(ingredients);
         dest.writeTypedList(steps);
+        dest.writeString(image);
     }
 
     public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {
@@ -80,5 +87,6 @@ public class Dish implements Parcelable{
         servings = in.readInt();
         ingredients = in.createTypedArrayList(Ingredient.CREATOR);
         steps = in.createTypedArrayList(Step.CREATOR);
+        image = in.readString();
     }
 }

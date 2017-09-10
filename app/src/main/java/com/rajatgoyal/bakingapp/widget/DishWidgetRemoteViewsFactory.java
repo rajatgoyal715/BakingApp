@@ -133,6 +133,7 @@ public class DishWidgetRemoteViewsFactory implements RemoteViewsService.RemoteVi
                                 int id = dishObject.getInt("id");
                                 String name = dishObject.getString("name");
                                 int servings = dishObject.getInt("servings");
+                                String image = dishObject.getString("image");
 
                                 JSONArray ingredientsArray = dishObject.getJSONArray("ingredients");
                                 int ingCount = ingredientsArray.length();
@@ -164,7 +165,7 @@ public class DishWidgetRemoteViewsFactory implements RemoteViewsService.RemoteVi
                                     steps.add(new Step(stepId, shortDescription, description, videoURL, thumbnailURL));
                                 }
 
-                                dishes.add(new Dish(id, name, servings, ingredients, steps));
+                                dishes.add(new Dish(id, name, servings, ingredients, steps, image));
                             }
                         } catch (JSONException e) {
                             // timber log statement

@@ -115,16 +115,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
         } else if (!TextUtils.isEmpty(step.getThumbnailUrl())) {
 
-            thumbnailUrl = step.getThumbnailUrl();
-
-            String mimeType = URLConnection.guessContentTypeFromName(thumbnailUrl);
-            if (mimeType != null && mimeType.startsWith("video")) {
-                videoAvailable = true;
-                mediaUrl = thumbnailUrl;
-            } else if (mimeType != null && mimeType.startsWith("image")) {
+            String mimeType = URLConnection.guessContentTypeFromName(step.getThumbnailUrl());
+            if (mimeType != null && mimeType.startsWith("image")) {
                 imageAvailable = true;
+                thumbnailUrl = step.getThumbnailUrl();
             }
-
         }
 
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);

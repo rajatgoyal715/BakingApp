@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
                                 int id = dishObject.getInt("id");
                                 String name = dishObject.getString("name");
                                 int servings = dishObject.getInt("servings");
+                                String image = dishObject.getString("image");
 
                                 JSONArray ingredientsArray = dishObject.getJSONArray("ingredients");
                                 int ingCount = ingredientsArray.length();
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements DishesAdapter.Dis
                                     steps.add(new Step(stepId, shortDescription, description, videoURL, thumbnailURL));
                                 }
 
-                                dishes.add(new Dish(id, name, servings, ingredients, steps));
+                                dishes.add(new Dish(id, name, servings, ingredients, steps, image));
                             }
 
                             updateDishes();

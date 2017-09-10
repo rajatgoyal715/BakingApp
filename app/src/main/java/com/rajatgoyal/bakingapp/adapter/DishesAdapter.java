@@ -2,14 +2,17 @@ package com.rajatgoyal.bakingapp.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rajatgoyal.bakingapp.R;
 import com.rajatgoyal.bakingapp.model.Dish;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -46,6 +49,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.DishViewHo
 
         String servingsString = "Servings: " + Integer.toString(dishes.get(position).getServings());
         holder.servingsCount.setText(servingsString);
+
+        if (!TextUtils.isEmpty(dishes.get(position).getImage())) {
+            Picasso.with(context)
+                    .load(dishes.get(position).getImage())
+                    .placeholder(R.drawable.serve)
+                    .into(holder.dishImage);
+        }
     }
 
     @Override
@@ -61,11 +71,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.DishViewHo
     class DishViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView dishName, servingsCount;
+        ImageView dishImage;
 
         public DishViewHolder(View itemView) {
             super(itemView);
             dishName = (TextView) itemView.findViewById(R.id.dish_name_text_view);
             servingsCount = (TextView) itemView.findViewById(R.id.servings_count_text_view);
+            dishImage = (ImageView) itemView.findViewById(R.id.dish_image_view);
 
             itemView.setOnClickListener(this);
         }
